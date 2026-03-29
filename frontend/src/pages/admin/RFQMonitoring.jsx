@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
+import { convertAndFormatINR } from '../../utils/currency';
 
 export default function RFQMonitoring() {
     const [rfqs, setRfqs] = useState([]);
@@ -53,7 +54,7 @@ export default function RFQMonitoring() {
                         { label: 'Total RFQs', value: rfqs.length, icon: 'fa-clipboard-list', color: '#6366f1', bg: '#eef2ff', sub: 'All time' },
                         { label: 'Pending', value: rfqs.filter(r => r.status === 'pending').length, icon: 'fa-clock', color: '#f59e0b', bg: '#fffbeb', sub: 'Awaiting response' },
                         { label: 'Accepted', value: rfqs.filter(r => r.status === 'accepted').length, icon: 'fa-circle-check', color: '#10b981', bg: '#ecfdf5', sub: 'Completed' },
-                        { label: 'Total Value', value: `$${totalValue.toLocaleString()}`, icon: 'fa-chart-line', color: '#ef4444', bg: '#fef2f2', sub: 'Expected value' },
+                        { label: 'Total Value', value: convertAndFormatINR(totalValue), icon: 'fa-indian-rupee-sign', color: '#ef4444', bg: '#fef2f2', sub: 'Expected value' },
                     ].map((card, i) => (
                         <div key={i} style={{
                             background: '#fff', borderRadius: 14, border: '1px solid #f3f4f6',
@@ -203,13 +204,13 @@ export default function RFQMonitoring() {
                                     <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>{r.quantity}</p>
 
                                     {/* Expected */}
-                                    <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>${r.expected_price.toFixed(2)}</p>
+                                    <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>{convertAndFormatINR(r.expected_price)}</p>
 
                                     {/* Vendor Price */}
                                     <div>
                                         {r.vendor_price > 0 ? (
                                             <p style={{ fontSize: 13, fontWeight: 600, color: r.vendor_price <= r.expected_price ? '#10b981' : '#ef4444', margin: 0 }}>
-                                                ${r.vendor_price.toFixed(2)}
+                                                {convertAndFormatINR(r.vendor_price)}
                                                 {r.vendor_price <= r.expected_price ? (
                                                     <i className="fa-solid fa-arrow-down" style={{ fontSize: 8, marginLeft: 4 }} />
                                                 ) : (

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { convertAndFormatINR } from '../utils/currency';
+import CurrencyBadge from '../components/CurrencyBadge';
 
 export default function Landing() {
     const [products, setProducts] = useState([]);
@@ -49,15 +51,8 @@ export default function Landing() {
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64
                 }}>
                     <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-                        <div style={{
-                            width: 36, height: 36, borderRadius: 10,
-                            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            boxShadow: '0 4px 12px rgba(99,102,241,0.25)'
-                        }}>
-                            <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 13 }} />
-                        </div>
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#111827', letterSpacing: -0.4 }}>TradeHub</span>
+                        <img src="/logo.png" alt="VenDora" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
+                        <span style={{ fontSize: 18, fontWeight: 700, color: '#111827', letterSpacing: -0.4 }}>VenDora</span>
                     </Link>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {isAuthenticated && dashboardLink ? (
@@ -231,16 +226,19 @@ export default function Landing() {
                         <h2 style={{ fontSize: 28, fontWeight: 700, color: '#111827', letterSpacing: -0.5 }}>Featured Products</h2>
                         <p style={{ color: '#9ca3af', marginTop: 8, fontSize: 15 }}>Discover quality products from verified vendors.</p>
                     </div>
-                    {isAuthenticated && user?.role === 'buyer' && (
-                        <Link to="/buyer/products" style={{
-                            display: 'inline-flex', alignItems: 'center', gap: 6,
-                            padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600,
-                            color: '#374151', border: '1px solid #e5e7eb', background: '#fff',
-                            textDecoration: 'none', boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
-                        }}>
-                            Browse All <i className="fa-solid fa-arrow-right" style={{ fontSize: 10 }} />
-                        </Link>
-                    )}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <CurrencyBadge />
+                        {isAuthenticated && user?.role === 'buyer' && (
+                            <Link to="/buyer/products" style={{
+                                display: 'inline-flex', alignItems: 'center', gap: 6,
+                                padding: '10px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600,
+                                color: '#374151', border: '1px solid #e5e7eb', background: '#fff',
+                                textDecoration: 'none', boxShadow: '0 1px 2px rgba(0,0,0,0.04)'
+                            }}>
+                                Browse All <i className="fa-solid fa-arrow-right" style={{ fontSize: 10 }} />
+                            </Link>
+                        )}
+                    </div>
                 </div>
 
                 {loading ? (
@@ -336,15 +334,15 @@ export default function Landing() {
                                             {product.discount > 0 ? (
                                                 <>
                                                     <span style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>
-                                                        ${(product.price * (1 - product.discount / 100)).toFixed(2)}
+                                                        {convertAndFormatINR(product.price * (1 - product.discount / 100))}
                                                     </span>
                                                     <span style={{ fontSize: 13, color: '#d1d5db', textDecoration: 'line-through' }}>
-                                                        ${product.price.toFixed(2)}
+                                                        {convertAndFormatINR(product.price)}
                                                     </span>
                                                 </>
                                             ) : (
                                                 <span style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>
-                                                    ${product.price.toFixed(2)}
+                                                    {convertAndFormatINR(product.price)}
                                                 </span>
                                             )}
                                         </div>
@@ -383,12 +381,12 @@ export default function Landing() {
                 )}
             </section>
 
-            {/* ──── Why TradeHub ──── */}
+            {/* ──── Why VenDora ──── */}
             <section style={{ background: '#fafafa', borderTop: '1px solid #f3f4f6' }}>
                 <div style={{ maxWidth: 1000, margin: '0 auto', padding: '80px 32px' }}>
                     <div style={{ textAlign: 'center', marginBottom: 56 }}>
                         <p style={{ fontSize: 12, fontWeight: 600, color: '#6366f1', textTransform: 'uppercase', letterSpacing: 1.5, marginBottom: 8 }}>
-                            Why TradeHub
+                            Why VenDora
                         </p>
                         <h2 style={{ fontSize: 28, fontWeight: 700, color: '#111827', letterSpacing: -0.5, marginBottom: 10 }}>
                             Built for Modern B2B Commerce
@@ -482,7 +480,7 @@ export default function Landing() {
                             Ready to Transform Your Procurement?
                         </h2>
                         <p style={{ color: '#94a3b8', marginBottom: 36, fontSize: 16, maxWidth: 480, margin: '0 auto 36px' }}>
-                            Join hundreds of businesses already using TradeHub to streamline their B2B operations.
+                            Join hundreds of businesses already using VenDora to streamline their B2B operations.
                         </p>
                         <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
                             <Link to="/signup/buyer" style={{
@@ -523,9 +521,9 @@ export default function Landing() {
                         }}>
                             <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 9 }} />
                         </div>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>TradeHub</span>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>VenDora</span>
                     </div>
-                    <p style={{ fontSize: 13, color: '#9ca3af' }}>© 2026 TradeHub. All rights reserved.</p>
+                    <p style={{ fontSize: 13, color: '#9ca3af' }}>© 2026 VenDora. All rights reserved.</p>
                     <div style={{ display: 'flex', gap: 24 }}>
                         {['Privacy', 'Terms', 'Contact'].map(link => (
                             <a key={link} href="#" style={{ fontSize: 13, color: '#9ca3af', textDecoration: 'none', transition: 'color 0.2s' }}>

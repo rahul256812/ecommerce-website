@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
+import { convertAndFormatINR, formatINR, formatUSD, convertToINR } from '../../utils/currency';
+import CurrencyBadge from '../../components/CurrencyBadge';
 
 const catMeta = {
     Electronics: { icon: 'fa-microchip', color: '#6366f1', bg: '#eef2ff' },
@@ -64,7 +66,10 @@ export default function BuyerProducts() {
                         Marketplace
                     </p>
                     <h1 style={{ fontSize: 26, fontWeight: 700, color: '#111827', margin: '0 0 4px 0', letterSpacing: -0.5 }}>Browse Products</h1>
-                    <p style={{ fontSize: 14, color: '#9ca3af', margin: 0 }}>Discover quality products from verified vendors.</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '8px 0 0 0' }}>
+                        <p style={{ fontSize: 14, color: '#9ca3af', margin: 0 }}>Discover quality products from verified vendors.</p>
+                        <CurrencyBadge showUSD={true} />
+                    </div>
                 </div>
 
                 {/* Search Bar */}
@@ -227,11 +232,11 @@ export default function BuyerProducts() {
                                         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
                                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                                 <span style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>
-                                                    ${discountedPrice || p.price.toFixed(2)}
+                                                    {convertAndFormatINR(discountedPrice || p.price)}
                                                 </span>
                                                 {discountedPrice && (
                                                     <span style={{ fontSize: 12, color: '#d1d5db', textDecoration: 'line-through' }}>
-                                                        ${p.price.toFixed(2)}
+                                                        {formatINR(convertToINR(p.price))}
                                                     </span>
                                                 )}
                                             </div>
@@ -331,7 +336,7 @@ export default function BuyerProducts() {
                             <div>
                                 <p style={{ fontSize: 13, fontWeight: 600, color: '#111827', margin: 0 }}>{rfqModal.product?.name}</p>
                                 <p style={{ fontSize: 11, color: '#9ca3af', margin: '2px 0 0 0' }}>
-                                    ${rfqModal.product?.price.toFixed(2)} · {rfqModal.product?.quantity} in stock
+                                    {convertAndFormatINR(rfqModal.product?.price)} · {rfqModal.product?.quantity} in stock
                                 </p>
                             </div>
                         </div>

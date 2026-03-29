@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import Modal from '../../components/Modal';
 import api from '../../api';
+import { convertAndFormatINR, formatINR, convertToINR } from '../../utils/currency';
 
 const categoryColors = {
     'Electronics': { bg: '#eef2ff', color: '#6366f1' },
@@ -107,7 +108,7 @@ export default function VendorProducts() {
                     {[
                         { label: 'Total Products', value: products.length, icon: 'fa-boxes-stacked', color: '#6366f1', bg: '#eef2ff' },
                         { label: 'Total Stock', value: totalStock.toLocaleString(), icon: 'fa-warehouse', color: '#3b82f6', bg: '#eff6ff' },
-                        { label: 'Inventory Value', value: `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}`, icon: 'fa-dollar-sign', color: '#10b981', bg: '#ecfdf5' },
+                        { label: 'Inventory Value', value: convertAndFormatINR(totalValue), icon: 'fa-indian-rupee-sign', color: '#10b981', bg: '#ecfdf5' },
                         { label: 'Low Stock', value: lowStock, icon: 'fa-triangle-exclamation', color: lowStock > 0 ? '#f59e0b' : '#10b981', bg: lowStock > 0 ? '#fffbeb' : '#ecfdf5' },
                     ].map((s, i) => (
                         <div key={i} style={{
@@ -243,7 +244,7 @@ export default function VendorProducts() {
                                     {/* Price */}
                                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                         <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>
-                                            ${p.price.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                            {convertAndFormatINR(p.price)}
                                         </span>
                                         {p.discount > 0 && (
                                             <span style={{
@@ -313,7 +314,7 @@ export default function VendorProducts() {
                                 Showing {products.length} product{products.length !== 1 ? 's' : ''}
                             </span>
                             <span style={{ fontSize: 12, color: '#9ca3af' }}>
-                                Total inventory value: <strong style={{ color: '#374151' }}>${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2 })}</strong>
+                                Total inventory value: <strong style={{ color: '#374151' }}>{convertAndFormatINR(totalValue)}</strong>
                             </span>
                         </div>
                     </div>

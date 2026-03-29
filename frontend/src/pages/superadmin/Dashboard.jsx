@@ -206,7 +206,7 @@ export default function SuperAdminDashboard() {
                     <div style={{ maxWidth: '60%' }}>
                         <h2 style={{ fontSize: 22, fontWeight: 800, margin: '0 0 8px 0' }}>Platform Scaling & Insights</h2>
                         <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.85)', margin: 0 }}>
-                            TradeHub is currently processing active requests across all regions. Ensure global tax settings and commission rates are verified in the configuration panel.
+                            VenDora is currently processing active requests across all regions. Ensure global tax settings and commission rates are verified in the configuration panel.
                         </p>
                     </div>
                     <div style={{

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
+import { convertAndFormatINR } from '../../utils/currency';
 
 export default function AdminOrders() {
     const [orders, setOrders] = useState([]);
@@ -56,9 +58,9 @@ export default function AdminOrders() {
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14, marginBottom: 24 }}>
                     {[
                         { label: 'Total Orders', value: orders.length, icon: 'fa-receipt', color: '#6366f1', bg: '#eef2ff', sub: 'All time' },
-                        { label: 'Revenue', value: `$${total.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, icon: 'fa-dollar-sign', color: '#10b981', bg: '#ecfdf5', sub: 'Gross revenue' },
-                        { label: 'Commission', value: `$${commission.toLocaleString(undefined, { minimumFractionDigits: 2 })}`, icon: 'fa-hand-holding-dollar', color: '#8b5cf6', bg: '#f5f3ff', sub: 'Platform earnings' },
-                        { label: 'Avg. Order', value: orders.length > 0 ? `$${(total / orders.length).toFixed(2)}` : '$0.00', icon: 'fa-chart-line', color: '#f59e0b', bg: '#fffbeb', sub: 'Per order' },
+                        { label: 'Revenue', value: convertAndFormatINR(total), icon: 'fa-indian-rupee-sign', color: '#10b981', bg: '#ecfdf5', sub: 'Gross revenue' },
+                        { label: 'Commission', value: convertAndFormatINR(commission), icon: 'fa-hand-holding-dollar', color: '#8b5cf6', bg: '#f5f3ff', sub: 'Platform earnings' },
+                        { label: 'Avg. Order', value: orders.length > 0 ? convertAndFormatINR(total / orders.length) : '₹0.00', icon: 'fa-chart-line', color: '#f59e0b', bg: '#fffbeb', sub: 'Per order' },
                     ].map((card, i) => (
                         <div key={i} style={{
                             background: '#fff', borderRadius: 14, border: '1px solid #f3f4f6',
@@ -180,7 +182,7 @@ export default function AdminOrders() {
                                                 {st.label}
                                             </span>
                                             <p style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: 0 }}>
-                                                ${o.total_amount.toFixed(2)}
+                                                {convertAndFormatINR(o.total_amount)}
                                             </p>
                                         </div>
                                     </div>
@@ -205,12 +207,12 @@ export default function AdminOrders() {
                                                         <div>
                                                             <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>{item.product_name}</p>
                                                             <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>
-                                                                ${item.price.toFixed(2)} × {item.quantity}
+                                                                {convertAndFormatINR(item.price)} × {item.quantity}
                                                             </p>
                                                         </div>
                                                     </div>
                                                     <p style={{ fontSize: 13, fontWeight: 700, color: '#111827', margin: 0 }}>
-                                                        ${(item.price * item.quantity).toFixed(2)}
+                                                        {convertAndFormatINR(item.price * item.quantity)}
                                                     </p>
                                                 </div>
                                             );
@@ -228,7 +230,7 @@ export default function AdminOrders() {
                                                 fontSize: 11, color: '#8b5cf6', fontWeight: 600,
                                             }}>
                                                 <i className="fa-solid fa-hand-holding-dollar" style={{ fontSize: 9 }} />
-                                                Commission: ${o.commission_amount.toFixed(2)}
+                                                Commission: {convertAndFormatINR(o.commission_amount)}
                                             </span>
                                             <span style={{ width: 1, height: 12, background: '#e5e7eb' }} />
                                             <span style={{

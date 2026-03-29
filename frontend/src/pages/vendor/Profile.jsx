@@ -31,17 +31,36 @@ export default function VendorProfile() {
     const [hoveredBtn, setHoveredBtn] = useState(null);
 
     useEffect(() => {
-        api.get('/users/me').then(res => { setProfile(res.data); setForm(res.data); }).catch(console.error);
+        api.get('/users/me').then(res => { 
+            console.log('Profile data loaded:', res.data);
+            setProfile(res.data); 
+            setForm(res.data); 
+        }).catch(err => {
+            console.error('Failed to load profile:', err);
+            // Try alternative endpoint
+            api.get('/users/profile').then(res => { 
+                console.log('Profile data loaded (alternative):', res.data);
+                setProfile(res.data); 
+                setForm(res.data); 
+            }).catch(err2 => {
+                console.error('Failed to load profile (alternative):', err2);
+            });
+        });
     }, []);
 
     const handleSave = async () => {
         try {
+            console.log('Saving profile:', form);
             await api.put('/users/me', { name: form.name, address: form.address, date_of_birth: form.date_of_birth });
             setProfile({ ...profile, ...form });
             setEditing(false);
             setMsg('Profile updated successfully!');
             setTimeout(() => setMsg(''), 3000);
-        } catch (err) { console.error(err); }
+        } catch (err) { 
+            console.error('Failed to save profile:', err);
+            setMsg('Failed to update profile');
+            setTimeout(() => setMsg(''), 3000);
+        }
     };
 
     const getInputStyle = (field) => ({

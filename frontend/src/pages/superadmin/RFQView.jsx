@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
+import { convertAndFormatINR } from '../../utils/currency';
 
 export default function SARFQView() {
     const [rfqs, setRfqs] = useState([]);
@@ -51,7 +52,7 @@ export default function SARFQView() {
                         { label: 'Total RFQs', value: rfqs.length, icon: 'fa-clipboard-list', color: '#6366f1', bg: '#eef2ff', sub: 'All time' },
                         { label: 'Pending', value: rfqs.filter(r => r.status === 'pending').length, icon: 'fa-clock', color: '#f59e0b', bg: '#fffbeb', sub: 'Awaiting response' },
                         { label: 'Accepted', value: rfqs.filter(r => r.status === 'accepted').length, icon: 'fa-circle-check', color: '#10b981', bg: '#ecfdf5', sub: 'Completed' },
-                        { label: 'Total Value', value: `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 0 })}`, icon: 'fa-chart-line', color: '#ef4444', bg: '#fef2f2', sub: 'Expected value' },
+                        { label: 'Total Value', value: convertAndFormatINR(totalValue), icon: 'fa-indian-rupee-sign', color: '#ef4444', bg: '#fef2f2', sub: 'Expected value' },
                     ].map((card, i) => (
                         <div key={i} style={{
                             background: '#fff', borderRadius: 14, border: '1px solid #f3f4f6',
@@ -197,17 +198,14 @@ export default function SARFQView() {
 
                                     {/* Expected Price */}
                                     <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>
-                                        ${r.expected_price?.toFixed(2)}
+                                        {convertAndFormatINR(r.expected_price)}
                                     </span>
 
                                     {/* Vendor Price */}
-                                    <span style={{
-                                        fontSize: 13, fontWeight: 600,
-                                        color: r.vendor_price > 0 ? (priceAbove ? '#ef4444' : '#10b981') : '#d1d5db',
-                                    }}>
+                                    <span style={{ fontSize: 13, fontWeight: 600, color: priceAbove ? '#ef4444' : '#10b981' }}>
                                         {r.vendor_price > 0 ? (
                                             <>
-                                                ${r.vendor_price?.toFixed(2)}
+                                                {convertAndFormatINR(r.vendor_price)}
                                                 <span style={{ fontSize: 10, marginLeft: 3 }}>
                                                     {priceAbove ? '↑' : '↓'}
                                                 </span>

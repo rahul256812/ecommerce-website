@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
+import { convertAndFormatINR, formatINR, convertToINR } from '../../utils/currency';
 
 export default function BuyerCart() {
     const [items, setItems] = useState([]);
@@ -151,12 +152,12 @@ export default function BuyerCart() {
                                             }}>{item.product_name}</h3>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                                 <span style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>
-                                                    ${unitPrice.toFixed(2)}
+                                                    {convertAndFormatINR(unitPrice)}
                                                 </span>
                                                 {item.product_discount > 0 && (
                                                     <>
                                                         <span style={{ fontSize: 12, color: '#d1d5db', textDecoration: 'line-through' }}>
-                                                            ${item.product_price.toFixed(2)}
+                                                            {formatINR(convertToINR(item.product_price))}
                                                         </span>
                                                         <span style={{
                                                             fontSize: 10, fontWeight: 700, color: '#ef4444',
@@ -202,7 +203,7 @@ export default function BuyerCart() {
                                         {/* Line Total */}
                                         <div style={{ width: 100, textAlign: 'right' }}>
                                             <p style={{ fontSize: 16, fontWeight: 700, color: '#111827', margin: 0 }}>
-                                                ${lineTotal.toFixed(2)}
+                                                {convertAndFormatINR(lineTotal)}
                                             </p>
                                         </div>
 
@@ -239,28 +240,28 @@ export default function BuyerCart() {
                                 Order Summary
                             </h3>
 
-                            {/* Line items */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14, paddingBottom: 14, borderBottom: '1px solid #f3f4f6' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                                    <span style={{ color: '#6b7280' }}>Subtotal ({items.length} items)</span>
-                                    <span style={{ fontWeight: 600, color: '#374151' }}>${subtotal.toFixed(2)}</span>
-                                </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                                    <span style={{ color: '#6b7280' }}>Shipping</span>
-                                    <span style={{ fontWeight: 600, color: '#10b981' }}>Free</span>
-                                </div>
-                                {totalSaved > 0 && (
-                                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
-                                        <span style={{ color: '#6b7280' }}>You save</span>
-                                        <span style={{ fontWeight: 600, color: '#ef4444' }}>-${totalSaved.toFixed(2)}</span>
-                                    </div>
-                                )}
-                            </div>
+{/* Line items */}
+<div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 14, paddingBottom: 14, borderBottom: '1px solid #f3f4f6' }}>
+<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+<span style={{ color: '#6b7280' }}>Subtotal ({items.length} items)</span>
+<span style={{ fontWeight: 600, color: '#374151' }}>{convertAndFormatINR(subtotal)}</span>
+</div>
+<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+<span style={{ color: '#6b7280' }}>Shipping</span>
+<span style={{ fontWeight: 600, color: '#374151' }}>FREE</span>
+</div>
+{totalSaved > 0 && (
+<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}>
+<span style={{ color: '#6b7280' }}>You save</span>
+<span style={{ fontWeight: 600, color: '#ef4444' }}>{formatINR(convertToINR(totalSaved))}</span>
+</div>
+)}
+</div>
 
-                            {/* Total */}
+{/* Total */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 20 }}>
                                 <span style={{ fontSize: 14, fontWeight: 600, color: '#111827' }}>Total</span>
-                                <span style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>${subtotal.toFixed(2)}</span>
+                                <span style={{ fontSize: 22, fontWeight: 700, color: '#111827' }}>{convertAndFormatINR(subtotal)}</span>
                             </div>
 
                             {/* Checkout Button */}
@@ -348,7 +349,7 @@ export default function BuyerCart() {
                                 <i className="fa-solid fa-bag-shopping" style={{ marginRight: 5, fontSize: 11 }} />
                                 {items.length} item{items.length !== 1 ? 's' : ''}
                             </span>
-                            <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>${subtotal.toFixed(2)}</span>
+                            <span style={{ fontSize: 15, fontWeight: 700, color: '#111827' }}>{convertAndFormatINR(subtotal)}</span>
                         </div>
 
                         {/* Address Field */}

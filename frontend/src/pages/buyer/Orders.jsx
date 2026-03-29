@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
+import { convertAndFormatINR, formatINR, convertToINR } from '../../utils/currency';
 
 const statusConfig = {
     pending: { label: 'Pending', color: '#f59e0b', bg: '#fffbeb', icon: 'fa-clock' },
@@ -33,7 +34,7 @@ export default function BuyerOrders() {
         { label: 'Total Orders', value: orders.length, icon: 'fa-receipt', color: '#6366f1', bg: '#eef2ff' },
         { label: 'In Progress', value: pendingCount, icon: 'fa-spinner', color: '#f59e0b', bg: '#fffbeb' },
         { label: 'Delivered', value: deliveredCount, icon: 'fa-circle-check', color: '#10b981', bg: '#ecfdf5' },
-        { label: 'Total Spent', value: `$${totalSpent.toFixed(0)}`, icon: 'fa-wallet', color: '#8b5cf6', bg: '#f5f3ff' },
+        { label: 'Total Spent', value: convertAndFormatINR(totalSpent), icon: 'fa-wallet', color: '#8b5cf6', bg: '#f5f3ff' },
     ];
 
     return (
@@ -185,12 +186,12 @@ export default function BuyerOrders() {
                                                     <div>
                                                         <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>{item.product_name}</p>
                                                         <p style={{ fontSize: 12, color: '#9ca3af', margin: 0 }}>
-                                                            Qty: {item.quantity} × ${item.price.toFixed(2)}
+                                                            Qty: {item.quantity} × {convertAndFormatINR(item.price)}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>
-                                                    ${(item.price * item.quantity).toFixed(2)}
+                                                    {convertAndFormatINR(item.price * item.quantity)}
                                                 </span>
                                             </div>
                                         ))}
@@ -209,7 +210,7 @@ export default function BuyerOrders() {
                                         <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                             <span style={{ fontSize: 12, color: '#9ca3af', fontWeight: 500 }}>Total:</span>
                                             <span style={{ fontSize: 18, fontWeight: 700, color: '#111827' }}>
-                                                ${o.total_amount.toFixed(2)}
+                                                {convertAndFormatINR(o.total_amount)}
                                             </span>
                                         </div>
                                     </div>

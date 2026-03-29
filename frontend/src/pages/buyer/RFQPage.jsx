@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
 import { useNavigate } from 'react-router-dom';
+import { convertAndFormatINR, formatINR, convertToINR } from '../../utils/currency';
 
 const statusMeta = {
     pending: { label: 'Pending', color: '#f59e0b', bg: '#fffbeb', icon: 'fa-clock' },
@@ -178,7 +179,7 @@ export default function BuyerRFQ() {
                                                 <i className="fa-solid fa-tag" style={{ fontSize: 9, marginRight: 4 }} /> Your Price
                                             </span>
                                             <p style={{ fontSize: 18, fontWeight: 700, color: '#111827', margin: '4px 0 0 0' }}>
-                                                ${r.expected_price.toFixed(2)}<span style={{ fontSize: 12, fontWeight: 500, color: '#9ca3af' }}>/unit</span>
+                                                {convertAndFormatINR(r.expected_price)}<span style={{ fontSize: 12, fontWeight: 500, color: '#9ca3af' }}>/unit</span>
                                             </p>
                                         </div>
                                         {r.vendor_price > 0 && (
@@ -187,7 +188,7 @@ export default function BuyerRFQ() {
                                                     <i className="fa-solid fa-handshake" style={{ fontSize: 9, marginRight: 4 }} /> Vendor Price
                                                 </span>
                                                 <p style={{ fontSize: 18, fontWeight: 700, color: '#6366f1', margin: '4px 0 0 0' }}>
-                                                    ${r.vendor_price.toFixed(2)}<span style={{ fontSize: 12, fontWeight: 500, color: '#9ca3af' }}>/unit</span>
+                                                    {convertAndFormatINR(r.vendor_price)}<span style={{ fontSize: 12, fontWeight: 500, color: '#9ca3af' }}>/unit</span>
                                                 </p>
                                             </div>
                                         )}

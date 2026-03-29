@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
+import { convertAndFormatINR } from '../../utils/currency';
 import { useAuth } from '../../context/AuthContext';
 
 export default function AdminDashboard() {
@@ -39,7 +40,7 @@ export default function AdminDashboard() {
         { label: 'Total Buyers', value: stats.buyers, icon: 'fa-users', color: '#10b981', bg: '#ecfdf5', sub: 'Registered accounts' },
         { label: 'Total RFQs', value: stats.rfqs, icon: 'fa-clipboard-list', color: '#8b5cf6', bg: '#f5f3ff', sub: 'All time' },
         { label: 'Total Orders', value: stats.orders, icon: 'fa-receipt', color: '#f59e0b', bg: '#fffbeb', sub: 'Platform-wide' },
-        { label: 'Revenue', value: `$${stats.revenue.toLocaleString()}`, icon: 'fa-chart-line', color: '#ef4444', bg: '#fef2f2', sub: 'Total GMV' },
+        { label: 'Revenue', value: convertAndFormatINR(stats.revenue), icon: 'fa-chart-line', color: '#ef4444', bg: '#fef2f2', sub: 'Total GMV' },
     ];
 
     const quickActions = [
@@ -200,7 +201,7 @@ export default function AdminDashboard() {
                                                             <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>Order #{order.id}</p>
                                                             <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>
                                                                 {new Date(order.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                                                                {' · '}${order.total_amount?.toFixed(2)}
+                                                                {' · '}{convertAndFormatINR(order.total_amount)}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -310,7 +311,7 @@ export default function AdminDashboard() {
                                     <i className="fa-solid fa-cubes" style={{ color: '#fff', fontSize: 13 }} />
                                 </div>
                                 <div>
-                                    <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>TradeHub Platform</p>
+                                    <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>VenDora Platform</p>
                                     <p style={{ fontSize: 11, color: '#6b7280', margin: 0 }}>B2B Commerce · Admin Panel</p>
                                 </div>
                             </div>

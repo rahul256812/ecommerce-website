@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import Modal from '../../components/Modal';
 import api from '../../api';
+import { convertAndFormatINR } from '../../utils/currency';
 
 export default function SAProducts() {
     const [products, setProducts] = useState([]);
@@ -54,7 +55,7 @@ export default function SAProducts() {
                         { label: 'Total Products', value: products.length, icon: 'fa-cubes', color: '#6366f1', bg: '#eef2ff', sub: 'Listed items' },
                         { label: 'Categories', value: categories.length, icon: 'fa-tags', color: '#f59e0b', bg: '#fffbeb', sub: 'Product types' },
                         { label: 'Total Stock', value: products.reduce((s, p) => s + (p.quantity || 0), 0).toLocaleString(), icon: 'fa-warehouse', color: '#10b981', bg: '#ecfdf5', sub: 'Units available' },
-                        { label: 'Inventory Value', value: `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 0 })}`, icon: 'fa-chart-line', color: '#8b5cf6', bg: '#f5f3ff', sub: 'Estimated value' },
+                        { label: 'Inventory Value', value: convertAndFormatINR(totalValue), icon: 'fa-indian-rupee-sign', color: '#8b5cf6', bg: '#f5f3ff', sub: 'Estimated value' },
                     ].map((card, i) => (
                         <div key={i} style={{
                             background: '#fff', borderRadius: 14, border: '1px solid #f3f4f6',
@@ -172,7 +173,7 @@ export default function SAProducts() {
                                     {/* Price */}
                                     <div>
                                         <span style={{ fontSize: 13, fontWeight: 700, color: '#111827' }}>
-                                            ${p.price?.toFixed(2)}
+                                            {convertAndFormatINR(p.price)}
                                         </span>
                                         {p.discount > 0 && (
                                             <span style={{
