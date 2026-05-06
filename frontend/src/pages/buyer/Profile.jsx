@@ -99,14 +99,15 @@ export default function BuyerProfile() {
 
                 {/* Profile Card */}
                 <div style={{
-                    background: '#fff', borderRadius: 18, overflow: 'hidden',
+                    background: '#fff', borderRadius: 18,
                     border: '1px solid #f3f4f6', boxShadow: '0 1px 4px rgba(0,0,0,0.04)',
+                    overflow: 'hidden',
                 }}>
 
-                    {/* Gradient Banner + Avatar */}
+                    {/* Gradient Banner with avatar inside */}
                     <div style={{
                         background: 'linear-gradient(135deg, #6366f1, #818cf8, #a78bfa)',
-                        padding: '32px 28px 48px', position: 'relative',
+                        padding: '28px 28px 24px', position: 'relative', overflow: 'hidden',
                     }}>
                         {/* Decorative circles */}
                         <div style={{
@@ -117,31 +118,32 @@ export default function BuyerProfile() {
                             position: 'absolute', bottom: -10, left: 60, width: 60, height: 60,
                             borderRadius: '50%', background: 'rgba(255,255,255,0.05)',
                         }} />
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                        {/* Label row */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 20 }}>
                             <i className="fa-solid fa-building" style={{ color: 'rgba(255,255,255,0.7)', fontSize: 12 }} />
                             <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 0.5 }}>
                                 Buyer Account
                             </span>
                         </div>
-                    </div>
-
-                    {/* Avatar (overlapping banner) */}
-                    <div style={{ padding: '0 28px', marginTop: -36 }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 16 }}>
+                        {/* Avatar + Name inside banner */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
                             <div style={{
-                                width: 72, height: 72, borderRadius: 18, flexShrink: 0,
-                                background: 'linear-gradient(135deg, #4f46e5, #6366f1)',
+                                width: 68, height: 68, borderRadius: 18, flexShrink: 0,
+                                background: 'rgba(255,255,255,0.15)',
+                                backdropFilter: 'blur(10px)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                border: '4px solid #fff', boxShadow: '0 2px 8px rgba(99,102,241,0.3)',
+                                border: '2px solid rgba(255,255,255,0.4)',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                             }}>
                                 <span style={{ color: '#fff', fontWeight: 700, fontSize: 26 }}>{initial}</span>
                             </div>
-                            <div style={{ paddingBottom: 6 }}>
-                                <h2 style={{ fontSize: 20, fontWeight: 700, color: '#111827', margin: 0 }}>{profile.name}</h2>
+                            <div>
+                                <h2 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 6px 0', textShadow: '0 1px 3px rgba(0,0,0,0.15)' }}>{profile.name}</h2>
                                 <span style={{
                                     display: 'inline-flex', alignItems: 'center', gap: 4,
-                                    fontSize: 11, fontWeight: 600, color: '#6366f1', background: '#eef2ff',
-                                    padding: '3px 10px', borderRadius: 6, marginTop: 4,
+                                    fontSize: 11, fontWeight: 600, color: '#6366f1',
+                                    background: 'rgba(255,255,255,0.92)',
+                                    padding: '3px 10px', borderRadius: 6,
                                     fontFamily: 'monospace',
                                 }}>
                                     <i className="fa-solid fa-id-badge" style={{ fontSize: 10 }} />

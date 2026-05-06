@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
-import { convertAndFormatINR } from '../utils/currency';
-import CurrencyBadge from '../components/CurrencyBadge';
+import { formatINR } from '../utils/currency';
 
 export default function Landing() {
     const [products, setProducts] = useState([]);
@@ -18,7 +17,7 @@ export default function Landing() {
         try {
             setLoading(true);
             const res = await api.get(`/products/?search=${q}`);
-            setProducts(res.data);
+            setProducts(res.data.slice(0, 9));
         } catch (err) { console.error(err); }
         finally { setLoading(false); }
     };
@@ -50,9 +49,9 @@ export default function Landing() {
                     maxWidth: 1200, margin: '0 auto', padding: '0 32px',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 64
                 }}>
-                    <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
-                        <img src="/logo.png" alt="VenDora" style={{ height: 36, width: 'auto', objectFit: 'contain' }} />
-                        <span style={{ fontSize: 18, fontWeight: 700, color: '#111827', letterSpacing: -0.4 }}>VenDora</span>
+                    <Link to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                        <img src="/logos.png" alt="VenDora" style={{ height: 48, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+                        <img src="/logoe.png" alt="VenDora" style={{ height: 24, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', marginTop: 10 }} />
                     </Link>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                         {isAuthenticated && dashboardLink ? (
@@ -227,7 +226,6 @@ export default function Landing() {
                         <p style={{ color: '#9ca3af', marginTop: 8, fontSize: 15 }}>Discover quality products from verified vendors.</p>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                        <CurrencyBadge />
                         {isAuthenticated && user?.role === 'buyer' && (
                             <Link to="/buyer/products" style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 6,
@@ -334,15 +332,15 @@ export default function Landing() {
                                             {product.discount > 0 ? (
                                                 <>
                                                     <span style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>
-                                                        {convertAndFormatINR(product.price * (1 - product.discount / 100))}
+                                                        {formatINR(product.price * (1 - product.discount / 100))}
                                                     </span>
                                                     <span style={{ fontSize: 13, color: '#d1d5db', textDecoration: 'line-through' }}>
-                                                        {convertAndFormatINR(product.price)}
+                                                        {formatINR(product.price)}
                                                     </span>
                                                 </>
                                             ) : (
                                                 <span style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>
-                                                    {convertAndFormatINR(product.price)}
+                                                    {formatINR(product.price)}
                                                 </span>
                                             )}
                                         </div>
@@ -514,14 +512,8 @@ export default function Landing() {
                     flexWrap: 'wrap', gap: 16
                 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{
-                            width: 28, height: 28, borderRadius: 8,
-                            background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}>
-                            <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 9 }} />
-                        </div>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: '#374151' }}>VenDora</span>
+                        <img src="/logos.png" alt="VenDora" style={{ height: 28, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+                        <img src="/logoe.png" alt="VenDora" style={{ height: 14, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', marginTop: 6 }} />
                     </div>
                     <p style={{ fontSize: 13, color: '#9ca3af' }}>© 2026 VenDora. All rights reserved.</p>
                     <div style={{ display: 'flex', gap: 24 }}>

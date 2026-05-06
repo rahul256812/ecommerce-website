@@ -25,6 +25,7 @@ const menuItems = {
         { label: 'Manage Users', path: '/admin/users', icon: 'fa-solid fa-users-gear' },
         { label: 'RFQ Monitoring', path: '/admin/rfq', icon: 'fa-solid fa-clipboard-check' },
         { label: 'Orders', path: '/admin/orders', icon: 'fa-solid fa-box' },
+        { label: 'Profile', path: '/admin/profile', icon: 'fa-solid fa-user-shield' },
     ],
     super_admin: [
         { label: 'Dashboard', path: '/superadmin', icon: 'fa-solid fa-gauge-high' },
@@ -64,28 +65,14 @@ export default function Sidebar({ children }) {
 
                 {/* Brand */}
                 <div style={{
-                    display: 'flex', alignItems: 'center', gap: 12,
+                    display: 'flex', alignItems: 'center', justifyContent: collapsed ? 'center' : 'flex-start',
                     padding: collapsed ? '20px 18px' : '20px 20px',
                     borderBottom: '1px solid #f3f4f6'
                 }}>
-                    <div style={{
-                        width: 38, height: 38, minWidth: 38, borderRadius: 11,
-                        background: 'linear-gradient(135deg, #6366f1, #4f46e5)',
-                        boxShadow: '0 4px 14px rgba(99,102,241,0.3)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                        <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 14 }} />
-                    </div>
-                    {!collapsed && (
-                        <div>
-                            <h2 style={{ fontSize: 15, fontWeight: 700, color: '#111827', letterSpacing: -0.3, lineHeight: 1, margin: 0 }}>
-                                VenDora
-                            </h2>
-                            <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 3, textTransform: 'capitalize' }}>
-                                {user?.role?.replace('_', ' ')}
-                            </p>
-                        </div>
-                    )}
+                    <NavLink to="/" style={{ display: 'flex', alignItems: 'center', textDecoration: 'none' }}>
+                        <img src="/logos.png" alt="VenDora" style={{ height: 40, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
+                        {!collapsed && <img src="/logoe.png" alt="VenDora" style={{ height: 20, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply', marginTop: 8 }} />}
+                    </NavLink>
                 </div>
 
                 {/* Collapse toggle */}

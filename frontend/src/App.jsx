@@ -26,6 +26,7 @@ import AdminDashboard from './pages/admin/Dashboard';
 import ManageUsers from './pages/admin/ManageUsers';
 import RFQMonitoring from './pages/admin/RFQMonitoring';
 import AdminOrders from './pages/admin/Orders';
+import AdminProfile from './pages/admin/Profile';
 
 import SADashboard from './pages/superadmin/Dashboard';
 import ApproveAdmins from './pages/superadmin/ApproveAdmins';
@@ -68,6 +69,7 @@ export default function App() {
           <Route path="/admin/users" element={<ProtectedRoute roles={['admin']}><ManageUsers /></ProtectedRoute>} />
           <Route path="/admin/rfq" element={<ProtectedRoute roles={['admin']}><RFQMonitoring /></ProtectedRoute>} />
           <Route path="/admin/orders" element={<ProtectedRoute roles={['admin']}><AdminOrders /></ProtectedRoute>} />
+          <Route path="/admin/profile" element={<ProtectedRoute roles={['admin']}><AdminProfile /></ProtectedRoute>} />
 
           {/* Super Admin */}
           <Route path="/superadmin" element={<ProtectedRoute roles={['super_admin']}><SADashboard /></ProtectedRoute>} />

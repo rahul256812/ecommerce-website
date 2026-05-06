@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
-import { useAuth } from '../../context/AuthContext';
 
 const inputStyle = {
     width: '100%', padding: '10px 14px', borderRadius: 10,
@@ -21,8 +20,7 @@ const labelStyle = {
     marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.3,
 };
 
-export default function VendorProfile() {
-    const { user } = useAuth();
+export default function AdminProfile() {
     const [profile, setProfile] = useState(null);
     const [editing, setEditing] = useState(false);
     const [form, setForm] = useState({});
@@ -31,34 +29,22 @@ export default function VendorProfile() {
     const [hoveredBtn, setHoveredBtn] = useState(null);
 
     useEffect(() => {
-        api.get('/users/me').then(res => { 
-            console.log('Profile data loaded:', res.data);
-            setProfile(res.data); 
-            setForm(res.data); 
-        }).catch(err => {
-            console.error('Failed to load profile:', err);
-            // Try alternative endpoint
-            api.get('/users/profile').then(res => { 
-                console.log('Profile data loaded (alternative):', res.data);
-                setProfile(res.data); 
-                setForm(res.data); 
-            }).catch(err2 => {
-                console.error('Failed to load profile (alternative):', err2);
-            });
-        });
+        api.get('/users/me').then(res => {
+            setProfile(res.data);
+            setForm(res.data);
+        }).catch(console.error);
     }, []);
 
     const handleSave = async () => {
         try {
-            console.log('Saving profile:', form);
-            await api.put('/users/me', { name: form.name, address: form.address, date_of_birth: form.date_of_birth });
+            await api.put('/users/me', { name: form.name, address: form.address });
             setProfile({ ...profile, ...form });
             setEditing(false);
             setMsg('Profile updated successfully!');
             setTimeout(() => setMsg(''), 3000);
-        } catch (err) { 
-            console.error('Failed to save profile:', err);
-            setMsg('Failed to update profile');
+        } catch (err) {
+            console.error(err);
+            setMsg('Failed to update profile.');
             setTimeout(() => setMsg(''), 3000);
         }
     };
@@ -76,11 +62,12 @@ export default function VendorProfile() {
                     borderTopColor: '#6366f1', borderRadius: '50%',
                     animation: 'spin 0.6s linear infinite',
                 }} />
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
         </Sidebar>
     );
 
-    const initial = profile.name?.charAt(0)?.toUpperCase() || 'V';
+    const initial = profile.name?.charAt(0)?.toUpperCase() || 'A';
 
     return (
         <Sidebar>
@@ -93,14 +80,14 @@ export default function VendorProfile() {
                         padding: '5px 12px', borderRadius: 20, marginBottom: 12,
                         background: '#eef2ff', color: '#6366f1', fontSize: 12, fontWeight: 600,
                     }}>
-                        <i className="fa-solid fa-user-gear" style={{ fontSize: 10 }} />
+                        <i className="fa-solid fa-user-shield" style={{ fontSize: 10 }} />
                         Account
                     </div>
                     <h1 style={{ fontSize: 28, fontWeight: 700, color: '#111827', letterSpacing: -0.5, margin: '0 0 4px 0' }}>
                         My Profile
                     </h1>
                     <p style={{ fontSize: 14, color: '#9ca3af', margin: 0 }}>
-                        Manage your account details and preferences.
+                        Manage your admin account details and preferences.
                     </p>
                 </div>
 
@@ -108,11 +95,13 @@ export default function VendorProfile() {
                 {msg && (
                     <div style={{
                         marginBottom: 20, padding: '12px 18px',
-                        background: '#ecfdf5', border: '1px solid #a7f3d0',
+                        background: msg.includes('Failed') ? '#fef2f2' : '#ecfdf5',
+                        border: `1px solid ${msg.includes('Failed') ? '#fca5a5' : '#a7f3d0'}`,
                         borderRadius: 12, display: 'flex', alignItems: 'center', gap: 10,
                     }}>
-                        <i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: 14 }} />
-                        <span style={{ fontSize: 13, color: '#065f46', fontWeight: 500 }}>{msg}</span>
+                        <i className={`fa-solid ${msg.includes('Failed') ? 'fa-circle-xmark' : 'fa-circle-check'}`}
+                            style={{ color: msg.includes('Failed') ? '#ef4444' : '#10b981', fontSize: 14 }} />
+                        <span style={{ fontSize: 13, color: msg.includes('Failed') ? '#991b1b' : '#065f46', fontWeight: 500 }}>{msg}</span>
                     </div>
                 )}
 
@@ -124,7 +113,7 @@ export default function VendorProfile() {
                     overflow: 'hidden',
                 }}>
 
-                    {/* Profile Banner with avatar + name inside */}
+                    {/* Gradient Banner with avatar + name inside */}
                     <div style={{
                         background: 'linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a5b4fc 100%)',
                         padding: '24px 28px 22px',
@@ -148,7 +137,7 @@ export default function VendorProfile() {
                                 <h2 style={{ fontSize: 20, fontWeight: 700, color: '#fff', margin: '0 0 6px 0', textShadow: '0 1px 3px rgba(0,0,0,0.15)' }}>
                                     {profile.name}
                                 </h2>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                                     <span style={{
                                         padding: '3px 10px', borderRadius: 6,
                                         background: 'rgba(255,255,255,0.92)', fontSize: 11, fontWeight: 600,
@@ -161,8 +150,8 @@ export default function VendorProfile() {
                                         background: 'rgba(255,255,255,0.92)', fontSize: 11, fontWeight: 600,
                                         color: '#6366f1',
                                     }}>
-                                        <i className="fa-solid fa-store" style={{ fontSize: 9, marginRight: 4 }} />
-                                        Vendor
+                                        <i className="fa-solid fa-user-shield" style={{ fontSize: 9, marginRight: 4 }} />
+                                        Admin
                                     </span>
                                 </div>
                             </div>
@@ -188,12 +177,12 @@ export default function VendorProfile() {
                     </div>
 
                     {/* Content Section */}
-                    <div style={{ padding: '0 28px 24px 28px' }}>
+                    <div style={{ padding: '0 28px 28px 28px' }}>
 
                         {/* Divider */}
                         <div style={{ height: 1, background: '#f3f4f6', margin: '20px 0 24px 0' }} />
 
-                        {/* Personal Information Section */}
+                        {/* Personal Information */}
                         <div style={{ marginBottom: 28 }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
                                 <div style={{
@@ -216,7 +205,7 @@ export default function VendorProfile() {
                                     {editing ? (
                                         <input
                                             value={form.name || ''}
-                                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                            onChange={e => setForm({ ...form, name: e.target.value })}
                                             onFocus={() => setFocusedField('name')}
                                             onBlur={() => setFocusedField(null)}
                                             style={getInputStyle('name')}
@@ -232,41 +221,44 @@ export default function VendorProfile() {
                                         <i className="fa-solid fa-envelope" style={{ fontSize: 10 }} />
                                         Email Address
                                     </label>
-                                    <p style={{ fontSize: 14, fontWeight: 500, color: '#374151', margin: 0, padding: '10px 0' }}>{profile.email}</p>
+                                    <p style={{ fontSize: 14, fontWeight: 500, color: '#374151', margin: 0, padding: '10px 0' }}>
+                                        {profile.email}
+                                        <i className="fa-solid fa-lock" style={{ marginLeft: 6, fontSize: 9, color: '#d1d5db' }} />
+                                    </p>
                                 </div>
 
-                                {/* Date of Birth */}
-                                <div>
-                                    <label style={labelStyle}>
-                                        <i className="fa-solid fa-calendar" style={{ fontSize: 10 }} />
-                                        Date of Birth
-                                    </label>
-                                    {editing ? (
-                                        <input
-                                            type="date"
-                                            value={form.date_of_birth || ''}
-                                            onChange={(e) => setForm({ ...form, date_of_birth: e.target.value })}
-                                            onFocus={() => setFocusedField('dob')}
-                                            onBlur={() => setFocusedField(null)}
-                                            style={getInputStyle('dob')}
-                                        />
-                                    ) : (
-                                        <p style={{ fontSize: 14, fontWeight: 500, color: '#374151', margin: 0, padding: '10px 0' }}>{profile.date_of_birth || '—'}</p>
-                                    )}
-                                </div>
-
-                                {/* Vendor ID */}
+                                {/* Admin ID */}
                                 <div>
                                     <label style={labelStyle}>
                                         <i className="fa-solid fa-fingerprint" style={{ fontSize: 10 }} />
-                                        Vendor ID
+                                        Admin ID
                                     </label>
-                                    <p style={{
-                                        fontSize: 13, fontWeight: 600, color: '#6b7280', margin: 0,
-                                        padding: '10px 0', fontFamily: 'monospace',
-                                    }}>
+                                    <p style={{ fontSize: 13, fontWeight: 600, color: '#6b7280', margin: 0, padding: '10px 0', fontFamily: 'monospace' }}>
                                         {profile.generated_id}
+                                        <i className="fa-solid fa-lock" style={{ marginLeft: 6, fontSize: 9, color: '#d1d5db' }} />
                                     </p>
+                                </div>
+
+                                {/* Address */}
+                                <div>
+                                    <label style={labelStyle}>
+                                        <i className="fa-solid fa-location-dot" style={{ fontSize: 10 }} />
+                                        Address
+                                    </label>
+                                    {editing ? (
+                                        <input
+                                            value={form.address || ''}
+                                            onChange={e => setForm({ ...form, address: e.target.value })}
+                                            onFocus={() => setFocusedField('address')}
+                                            onBlur={() => setFocusedField(null)}
+                                            placeholder="Enter your address"
+                                            style={getInputStyle('address')}
+                                        />
+                                    ) : (
+                                        <p style={{ fontSize: 14, fontWeight: 500, color: '#374151', margin: 0, padding: '10px 0' }}>
+                                            {profile.address || '—'}
+                                        </p>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -274,75 +266,76 @@ export default function VendorProfile() {
                         {/* Divider */}
                         <div style={{ height: 1, background: '#f3f4f6', margin: '0 0 24px 0' }} />
 
-                        {/* Address Section */}
-                        <div style={{ marginBottom: editing ? 0 : 4 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+                        {/* Account Status */}
+                        <div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
                                 <div style={{
-                                    width: 30, height: 30, borderRadius: 8,
-                                    background: '#ecfdf5',
+                                    width: 30, height: 30, borderRadius: 8, background: '#ecfdf5',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 }}>
-                                    <i className="fa-solid fa-location-dot" style={{ color: '#10b981', fontSize: 12 }} />
+                                    <i className="fa-solid fa-circle-check" style={{ color: '#10b981', fontSize: 12 }} />
                                 </div>
-                                <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>Business Address</h3>
+                                <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>Account Status</h3>
                             </div>
-
-                            <div>
-                                <label style={labelStyle}>
-                                    <i className="fa-solid fa-building" style={{ fontSize: 10 }} />
-                                    Address
-                                </label>
-                                {editing ? (
-                                    <input
-                                        value={form.address || ''}
-                                        onChange={(e) => setForm({ ...form, address: e.target.value })}
-                                        onFocus={() => setFocusedField('address')}
-                                        onBlur={() => setFocusedField(null)}
-                                        placeholder="Enter your business address"
-                                        style={getInputStyle('address')}
-                                    />
-                                ) : (
-                                    <p style={{ fontSize: 14, fontWeight: 500, color: '#374151', margin: 0, padding: '10px 0' }}>
-                                        {profile.address || '—'}
-                                    </p>
-                                )}
+                            <div style={{ display: 'flex', gap: 12 }}>
+                                {[
+                                    { label: 'Account Type', value: 'Admin', icon: 'fa-user-shield', color: '#6366f1', bg: '#eef2ff' },
+                                    { label: 'Status', value: 'Active', icon: 'fa-circle-check', color: '#10b981', bg: '#ecfdf5' },
+                                    { label: 'Verified', value: profile.is_verified ? 'Yes' : 'Pending', icon: 'fa-badge-check', color: profile.is_verified ? '#10b981' : '#f59e0b', bg: profile.is_verified ? '#ecfdf5' : '#fffbeb' },
+                                ].map((item, i) => (
+                                    <div key={i} style={{
+                                        flex: 1, background: '#fafbfc', borderRadius: 12, padding: '14px 16px',
+                                        border: '1px solid #f3f4f6',
+                                    }}>
+                                        <p style={{ fontSize: 11, fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.3, margin: '0 0 6px 0' }}>{item.label}</p>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                            <span style={{
+                                                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                                                width: 22, height: 22, borderRadius: 6, background: item.bg,
+                                            }}>
+                                                <i className={`fa-solid ${item.icon}`} style={{ fontSize: 10, color: item.color }} />
+                                            </span>
+                                            <span style={{ fontSize: 13, fontWeight: 700, color: '#374151' }}>{item.value}</span>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
 
-                        {/* ID Proof */}
-                        {profile.id_proof_path && (
-                            <>
-                                <div style={{ height: 1, background: '#f3f4f6', margin: '24px 0' }} />
-                                <div>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-                                        <div style={{
-                                            width: 30, height: 30, borderRadius: 8,
-                                            background: '#eff6ff',
-                                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                        }}>
-                                            <i className="fa-solid fa-shield-halved" style={{ color: '#3b82f6', fontSize: 12 }} />
-                                        </div>
-                                        <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>Verification</h3>
-                                    </div>
-                                    <a
-                                        href={profile.id_proof_path}
-                                        target="_blank"
-                                        rel="noreferrer"
-                                        style={{
-                                            display: 'inline-flex', alignItems: 'center', gap: 8,
-                                            padding: '10px 16px', borderRadius: 10,
-                                            background: '#f9fafb', border: '1px solid #e5e7eb',
-                                            color: '#4f46e5', fontSize: 13, fontWeight: 600,
-                                            textDecoration: 'none', transition: 'all 0.15s',
-                                        }}
-                                    >
-                                        <i className="fa-solid fa-file-lines" style={{ fontSize: 12 }} />
-                                        View ID Proof Document
-                                        <i className="fa-solid fa-arrow-up-right-from-square" style={{ fontSize: 10, marginLeft: 4 }} />
-                                    </a>
+                        {/* Security Section */}
+                        <div style={{ marginTop: 24 }}>
+                            <div style={{ height: 1, background: '#f3f4f6', margin: '0 0 24px 0' }} />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+                                <div style={{
+                                    width: 30, height: 30, borderRadius: 8, background: '#f5f3ff',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                }}>
+                                    <i className="fa-solid fa-shield-halved" style={{ color: '#8b5cf6', fontSize: 12 }} />
                                 </div>
-                            </>
-                        )}
+                                <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>Account Security</h3>
+                            </div>
+                            <div style={{
+                                background: '#fafbfc', borderRadius: 12, padding: '14px 18px',
+                                border: '1px solid #f3f4f6', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                            }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <div style={{
+                                        width: 34, height: 34, borderRadius: 9, background: '#fff', border: '1px solid #f3f4f6',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                    }}>
+                                        <i className="fa-solid fa-key" style={{ fontSize: 12, color: '#9ca3af' }} />
+                                    </div>
+                                    <div>
+                                        <p style={{ fontSize: 13, fontWeight: 600, color: '#374151', margin: 0 }}>Password</p>
+                                        <p style={{ fontSize: 11, color: '#9ca3af', margin: 0 }}>••••••••••</p>
+                                    </div>
+                                </div>
+                                <span style={{ fontSize: 11, color: '#9ca3af', fontWeight: 500 }}>
+                                    <i className="fa-solid fa-lock" style={{ fontSize: 9, marginRight: 3 }} />
+                                    Managed by super admin
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Action Footer */}

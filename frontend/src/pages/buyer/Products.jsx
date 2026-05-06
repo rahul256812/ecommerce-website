@@ -18,7 +18,7 @@ export default function BuyerProducts() {
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
     const [rfqModal, setRfqModal] = useState({ open: false, product: null });
-    const [rfqForm, setRfqForm] = useState({ quantity: '', message: '' });
+    const [rfqForm, setRfqForm] = useState({ quantity: '', expected_price: '', message: '' });
     const [hoveredCard, setHoveredCard] = useState(null);
     const [focusSearch, setFocusSearch] = useState(false);
 
@@ -48,10 +48,10 @@ export default function BuyerProducts() {
                 product_id: rfqModal.product.id,
                 vendor_id: rfqModal.product.vendor_id,
                 quantity: parseInt(rfqForm.quantity),
-                expected_price: rfqModal.product.price
+                expected_price: parseFloat(rfqForm.expected_price) || rfqModal.product.price
             });
             setRfqModal({ open: false, product: null });
-            setRfqForm({ quantity: '', message: '' });
+            setRfqForm({ quantity: '', expected_price: '', message: '' });
             alert('RFQ submitted!');
         } catch (err) {
             let errorMsg = 'Failed to submit RFQ';
@@ -369,6 +369,21 @@ export default function BuyerProducts() {
                             </label>
                             <input type="number" value={rfqForm.quantity} onChange={e => setRfqForm({ ...rfqForm, quantity: e.target.value })}
                                 placeholder="Enter quantity" min="1"
+                                style={{
+                                    width: '100%', padding: '10px 14px', borderRadius: 10, marginTop: 6,
+                                    border: '1.5px solid #e5e7eb', fontSize: 13, outline: 'none',
+                                    transition: 'border-color 0.15s', boxSizing: 'border-box',
+                                }}
+                                onFocus={e => e.currentTarget.style.borderColor = '#818cf8'}
+                                onBlur={e => e.currentTarget.style.borderColor = '#e5e7eb'}
+                            />
+                        </div>
+                        <div style={{ marginBottom: 12 }}>
+                            <label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                <i className="fa-solid fa-indian-rupee-sign" style={{ marginRight: 4, fontSize: 9 }} /> Expected Price (₹)
+                            </label>
+                            <input type="number" value={rfqForm.expected_price} onChange={e => setRfqForm({ ...rfqForm, expected_price: e.target.value })}
+                                placeholder={`Current price: ${formatINR(rfqModal.product?.price)}`} min="0" step="0.01"
                                 style={{
                                     width: '100%', padding: '10px 14px', borderRadius: 10, marginTop: 6,
                                     border: '1.5px solid #e5e7eb', fontSize: 13, outline: 'none',
