@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import Modal from '../../components/Modal';
 import api from '../../api';
-import { convertAndFormatINR, formatINR, convertToINR } from '../../utils/currency';
+import { formatINR } from '../../utils/currency';
 
 const categoryColors = {
     'Electronics': { bg: '#eef2ff', color: '#6366f1' },
@@ -25,6 +25,7 @@ export default function VendorProducts() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [deleteModal, setDeleteModal] = useState({ open: false, id: null });
+    const [editModal, setEditModal] = useState({ open: false, product: null });
     const [hoveredRow, setHoveredRow] = useState(null);
     const [addBtnHover, setAddBtnHover] = useState(false);
 
@@ -53,6 +54,18 @@ export default function VendorProducts() {
             setProducts(products.filter(p => p.id !== deleteModal.id));
             setDeleteModal({ open: false, id: null });
         } catch (err) { console.error(err); }
+    };
+
+    const handleEditField = async (id, field, value) => {
+        try {
+            const res = await api.put(`/products/${id}`, { [field]: value });
+            console.log('Update successful:', res.data);
+            setProducts(products.map(p => p.id === id ? { ...p, [field]: value } : p));
+            alert('Product updated successfully!');
+        } catch (err) {
+            console.error('Update failed:', err.response?.data || err.message);
+            alert('Failed to update product: ' + (err.response?.data?.detail || err.message));
+        }
     };
 
     const totalValue = products.reduce((s, p) => s + p.price * p.quantity, 0);
@@ -108,7 +121,7 @@ export default function VendorProducts() {
                     {[
                         { label: 'Total Products', value: products.length, icon: 'fa-boxes-stacked', color: '#6366f1', bg: '#eef2ff' },
                         { label: 'Total Stock', value: totalStock.toLocaleString(), icon: 'fa-warehouse', color: '#3b82f6', bg: '#eff6ff' },
-                        { label: 'Inventory Value', value: convertAndFormatINR(totalValue), icon: 'fa-indian-rupee-sign', color: '#10b981', bg: '#ecfdf5' },
+                        { label: 'Inventory Value', value: formatINR(totalValue), icon: 'fa-indian-rupee-sign', color: '#10b981', bg: '#ecfdf5' },
                         { label: 'Low Stock', value: lowStock, icon: 'fa-triangle-exclamation', color: lowStock > 0 ? '#f59e0b' : '#10b981', bg: lowStock > 0 ? '#fffbeb' : '#ecfdf5' },
                     ].map((s, i) => (
                         <div key={i} style={{
@@ -244,7 +257,7 @@ export default function VendorProducts() {
                                     {/* Price */}
                                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                         <span style={{ fontSize: 14, fontWeight: 700, color: '#111827' }}>
-                                            {convertAndFormatINR(p.price)}
+                                            {formatINR(p.price)}
                                         </span>
                                         {p.discount > 0 && (
                                             <span style={{
@@ -288,6 +301,18 @@ export default function VendorProducts() {
                                     {/* Actions */}
                                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
                                         <button
+                                            onClick={() => setEditModal({ open: true, product: p })}
+                                            title="Edit product"
+                                            style={{
+                                                width: 32, height: 32, borderRadius: 8,
+                                                border: '1px solid #e0e7ff', background: '#eef2ff',
+                                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                cursor: 'pointer', transition: 'all 0.15s',
+                                            }}
+                                        >
+                                            <i className="fa-solid fa-pen" style={{ fontSize: 12, color: '#6366f1' }} />
+                                        </button>
+                                        <button
                                             onClick={() => setDeleteModal({ open: true, id: p.id })}
                                             title="Delete product"
                                             style={{
@@ -314,7 +339,7 @@ export default function VendorProducts() {
                                 Showing {products.length} product{products.length !== 1 ? 's' : ''}
                             </span>
                             <span style={{ fontSize: 12, color: '#9ca3af' }}>
-                                Total inventory value: <strong style={{ color: '#374151' }}>{convertAndFormatINR(totalValue)}</strong>
+                                Total inventory value: <strong style={{ color: '#374151' }}>{formatINR(totalValue)}</strong>
                             </span>
                         </div>
                     </div>
@@ -323,6 +348,71 @@ export default function VendorProducts() {
 
             <Modal isOpen={deleteModal.open} onClose={() => setDeleteModal({ open: false, id: null })} onConfirm={handleDelete}
                 title="Delete Product" message="Are you sure you want to delete this product? This action cannot be undone." confirmText="Delete" danger />
+
+            {/* Edit Modal */}
+            {editModal.open && (
+                <div style={{
+                    position: 'fixed', inset: 0, zIndex: 50,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
+                }} onClick={() => setEditModal({ open: false, product: null })}>
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(4px)' }} />
+                    <div style={{
+                        position: 'relative', background: '#fff', borderRadius: 18,
+                        boxShadow: '0 20px 60px rgba(0,0,0,0.12)', width: '100%', maxWidth: 500, padding: '28px 26px',
+                    }} onClick={e => e.stopPropagation()}>
+                        <h3 style={{ fontSize: 18, fontWeight: 700, color: '#111827', marginBottom: 20 }}>Edit Product</h3>
+                        <div style={{ marginBottom: 16 }}>
+                            <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6, display: 'block' }}>Price</label>
+                            <input
+                                type="number" step="0.01"
+                                defaultValue={editModal.product?.price}
+                                onBlur={(e) => handleEditField(editModal.product.id, 'price', parseFloat(e.target.value))}
+                                style={{
+                                    width: '100%', padding: '10px 14px', borderRadius: 10,
+                                    border: '1.5px solid #e5e7eb', fontSize: 14,
+                                }}
+                            />
+                        </div>
+                        <div style={{ marginBottom: 16 }}>
+                            <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6, display: 'block' }}>Discount (%)</label>
+                            <input
+                                type="number" step="0.1"
+                                defaultValue={editModal.product?.discount}
+                                onBlur={(e) => handleEditField(editModal.product.id, 'discount', parseFloat(e.target.value))}
+                                style={{
+                                    width: '100%', padding: '10px 14px', borderRadius: 10,
+                                    border: '1.5px solid #e5e7eb', fontSize: 14,
+                                }}
+                            />
+                        </div>
+                        <div style={{ marginBottom: 20 }}>
+                            <label style={{ fontSize: 13, fontWeight: 600, color: '#374151', marginBottom: 6, display: 'block' }}>Image URL</label>
+                            <input
+                                type="text"
+                                defaultValue={editModal.product?.image_url}
+                                onBlur={(e) => handleEditField(editModal.product.id, 'image_url', e.target.value)}
+                                placeholder="https://example.com/image.jpg"
+                                style={{
+                                    width: '100%', padding: '10px 14px', borderRadius: 10,
+                                    border: '1.5px solid #e5e7eb', fontSize: 14,
+                                }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', gap: 10 }}>
+                            <button onClick={() => setEditModal({ open: false, product: null })} style={{
+                                flex: 1, padding: '11px 0', borderRadius: 10,
+                                border: '1.5px solid #e5e7eb', background: '#fff',
+                                color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                            }}>Cancel</button>
+                            <button onClick={() => setEditModal({ open: false, product: null })} style={{
+                                flex: 1, padding: '11px 0', borderRadius: 10, border: 'none',
+                                background: 'linear-gradient(135deg, #6366f1, #818cf8)',
+                                color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                            }}>Done</button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </Sidebar>
     );
 }

@@ -8,9 +8,16 @@ export default function BuyerProfile() {
     const [form, setForm] = useState({});
     const [msg, setMsg] = useState('');
     const [focusField, setFocusField] = useState(null);
+    const [editingBudget, setEditingBudget] = useState(false);
+    const [budgetValue, setBudgetValue] = useState('');
+    const [budgetSaving, setBudgetSaving] = useState(false);
 
     useEffect(() => {
-        api.get('/users/me').then(res => { setProfile(res.data); setForm(res.data); }).catch(console.error);
+        api.get('/users/me').then(res => {
+            setProfile(res.data);
+            setForm(res.data);
+            setBudgetValue(res.data.monthly_budget || '');
+        }).catch(console.error);
     }, []);
 
     const handleSave = async () => {
@@ -21,6 +28,25 @@ export default function BuyerProfile() {
             setMsg('Profile updated successfully!');
             setTimeout(() => setMsg(''), 3000);
         } catch (err) { console.error(err); }
+    };
+
+    const handleBudgetSave = async () => {
+        const val = parseFloat(budgetValue);
+        if (isNaN(val) || val < 0) return;
+        setBudgetSaving(true);
+        try {
+            await api.put('/users/me', { monthly_budget: val });
+            setProfile({ ...profile, monthly_budget: val });
+            setEditingBudget(false);
+            setMsg('Monthly budget updated successfully!');
+            setTimeout(() => setMsg(''), 3000);
+        } catch (err) { console.error(err); }
+        setBudgetSaving(false);
+    };
+
+    const formatCurrency = (val) => {
+        if (!val && val !== 0) return '—';
+        return '₹' + Number(val).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
     if (!profile) return (
@@ -261,6 +287,130 @@ export default function BuyerProfile() {
                     </div>
                 </div>
 
+                {/* Monthly Budget Card */}
+                <div style={{
+                    background: '#fff', borderRadius: 16, border: '1px solid #f3f4f6',
+                    boxShadow: '0 1px 3px rgba(0,0,0,0.04)', padding: '20px 24px', marginTop: 18,
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <div style={{
+                                width: 28, height: 28, borderRadius: 7, background: '#fef3c7',
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}>
+                                <i className="fa-solid fa-wallet" style={{ color: '#f59e0b', fontSize: 11 }} />
+                            </div>
+                            <h3 style={{ fontSize: 14, fontWeight: 700, color: '#111827', margin: 0 }}>Monthly Budget</h3>
+                        </div>
+                        {!editingBudget && (
+                            <button
+                                onClick={() => { setEditingBudget(true); setBudgetValue(profile.monthly_budget || ''); }}
+                                style={{
+                                    padding: '6px 14px', borderRadius: 8, border: '1.5px solid #e5e7eb',
+                                    background: '#fff', color: '#6366f1', fontSize: 12, fontWeight: 600,
+                                    cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5,
+                                    transition: 'all 0.15s',
+                                }}
+                                onMouseEnter={e => { e.currentTarget.style.background = '#eef2ff'; e.currentTarget.style.borderColor = '#c7d2fe'; }}
+                                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.borderColor = '#e5e7eb'; }}
+                            >
+                                <i className="fa-solid fa-pen" style={{ fontSize: 9 }} />
+                                Edit
+                            </button>
+                        )}
+                    </div>
+
+                    <div style={{
+                        background: '#fafbfc', borderRadius: 14, padding: '18px 20px',
+                        border: '1px solid #f3f4f6',
+                    }}>
+                        {editingBudget ? (
+                            <div>
+                                <label style={{
+                                    fontSize: 11, fontWeight: 700, color: '#9ca3af',
+                                    textTransform: 'uppercase', letterSpacing: 0.3,
+                                    display: 'block', marginBottom: 8,
+                                }}>Set Monthly Budget (₹)</label>
+                                <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                                    <div style={{ position: 'relative', flex: 1 }}>
+                                        <span style={{
+                                            position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)',
+                                            fontSize: 14, fontWeight: 600, color: '#9ca3af',
+                                        }}>₹</span>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="1000"
+                                            value={budgetValue}
+                                            onChange={e => setBudgetValue(e.target.value)}
+                                            onFocus={() => setFocusField('budget')}
+                                            onBlur={() => setFocusField(null)}
+                                            placeholder="e.g. 50000"
+                                            style={{
+                                                width: '100%', padding: '10px 12px 10px 28px', borderRadius: 10,
+                                                border: `1.5px solid ${focusField === 'budget' ? '#f59e0b' : '#e5e7eb'}`,
+                                                boxShadow: focusField === 'budget' ? '0 0 0 3px rgba(245,158,11,0.1)' : 'none',
+                                                fontSize: 14, fontWeight: 600, outline: 'none', fontFamily: 'inherit',
+                                                transition: 'all 0.15s', background: '#fff',
+                                                boxSizing: 'border-box', color: '#374151',
+                                            }}
+                                        />
+                                    </div>
+                                    <button
+                                        onClick={() => { setEditingBudget(false); setBudgetValue(profile.monthly_budget || ''); }}
+                                        style={{
+                                            padding: '10px 16px', borderRadius: 10,
+                                            border: '1.5px solid #e5e7eb', background: '#fff',
+                                            color: '#374151', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                        }}
+                                    >Cancel</button>
+                                    <button
+                                        onClick={handleBudgetSave}
+                                        disabled={budgetSaving}
+                                        style={{
+                                            padding: '10px 18px', borderRadius: 10, border: 'none',
+                                            background: 'linear-gradient(135deg, #f59e0b, #fbbf24)',
+                                            color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+                                            display: 'flex', alignItems: 'center', gap: 6,
+                                            opacity: budgetSaving ? 0.7 : 1,
+                                            transition: 'opacity 0.15s',
+                                        }}
+                                    >
+                                        <i className={`fa-solid ${budgetSaving ? 'fa-spinner fa-spin' : 'fa-check'}`} style={{ fontSize: 11 }} />
+                                        {budgetSaving ? 'Saving...' : 'Save'}
+                                    </button>
+                                </div>
+                                <p style={{ fontSize: 11, color: '#9ca3af', margin: '8px 0 0 0' }}>
+                                    <i className="fa-solid fa-circle-info" style={{ fontSize: 10, marginRight: 4 }} />
+                                    This budget is used in your Analytics dashboard for spending tracking and utilization reports.
+                                </p>
+                            </div>
+                        ) : (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                                <div style={{
+                                    width: 44, height: 44, borderRadius: 12, flexShrink: 0,
+                                    background: 'linear-gradient(135deg, #fef3c7, #fde68a)',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                }}>
+                                    <i className="fa-solid fa-indian-rupee-sign" style={{ fontSize: 16, color: '#d97706' }} />
+                                </div>
+                                <div>
+                                    <p style={{ fontSize: 11, fontWeight: 700, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: 0.3, margin: '0 0 4px 0' }}>
+                                        Current Monthly Budget
+                                    </p>
+                                    <p style={{ fontSize: 22, fontWeight: 700, color: '#111827', margin: 0, letterSpacing: -0.5 }}>
+                                        {profile.monthly_budget ? formatCurrency(profile.monthly_budget) : (
+                                            <span style={{ fontSize: 14, color: '#9ca3af', fontWeight: 500 }}>
+                                                Not set — click Edit to configure
+                                            </span>
+                                        )}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 {/* Account Details Card */}
                 <div style={{
                     background: '#fff', borderRadius: 16, border: '1px solid #f3f4f6',
@@ -341,3 +491,4 @@ export default function BuyerProfile() {
         </Sidebar>
     );
 }
+

@@ -74,7 +74,7 @@ export default function Login() {
                         }}>
                             <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 14 }} />
                         </div>
-                        <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: -0.4 }}>TradeHub</span>
+                        <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: -0.4 }}>VenDora</span>
                     </Link>
 
                     {/* Headline */}
@@ -126,7 +126,7 @@ export default function Login() {
                                 </div>
                             ))}
                         </div>
-                        <span style={{ fontSize: 13, color: '#64748b' }}>500+ businesses trust TradeHub</span>
+                        <span style={{ fontSize: 13, color: '#64748b' }}>500+ businesses trust VenDora</span>
                     </div>
                 </div>
             </div>

@@ -99,7 +99,7 @@ export default function Signup() {
                         }}>
                             <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 14 }} />
                         </div>
-                        <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: -0.4 }}>TradeHub</span>
+                        <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: -0.4 }}>VenDora</span>
                     </Link>
 
                     {/* Headline */}
@@ -107,7 +107,7 @@ export default function Signup() {
                         fontSize: 32, fontWeight: 700, color: '#fff',
                         lineHeight: 1.2, letterSpacing: -0.5, marginBottom: 16
                     }}>
-                        Join thousands of<br />businesses on TradeHub
+                        Join thousands of<br />businesses on VenDora
                     </h2>
                     <p style={{ fontSize: 15, color: '#94a3b8', lineHeight: 1.7, marginBottom: 48 }}>
                         Create your account to start buying, selling, and managing your B2B operations seamlessly.
@@ -151,7 +151,7 @@ export default function Signup() {
                                 </div>
                             ))}
                         </div>
-                        <span style={{ fontSize: 13, color: '#64748b' }}>500+ businesses trust TradeHub</span>
+                        <span style={{ fontSize: 13, color: '#64748b' }}>500+ businesses trust VenDora</span>
                     </div>
                 </div>
             </div>

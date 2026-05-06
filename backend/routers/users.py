@@ -131,6 +131,7 @@ async def get_profile(current_user: User = Depends(get_current_user)):
         "approval_status": current_user.approval_status.value,
         "id_proof_path": current_user.id_proof_path,
         "official_doc_path": current_user.official_doc_path,
+        "monthly_budget": current_user.monthly_budget,
     }
 
 @router.get("/me")
@@ -147,6 +148,7 @@ async def get_current_user_profile(current_user: User = Depends(get_current_user
         "approval_status": current_user.approval_status.value,
         "id_proof_path": current_user.id_proof_path,
         "official_doc_path": current_user.official_doc_path,
+        "monthly_budget": current_user.monthly_budget,
     }
 
 @router.put("/me")
@@ -163,6 +165,8 @@ async def update_current_user_profile(
         current_user.date_of_birth = profile.date_of_birth
     if profile.age is not None:
         current_user.age = profile.age
+    if profile.monthly_budget is not None:
+        current_user.monthly_budget = profile.monthly_budget
     
     db.commit()
     db.refresh(current_user)

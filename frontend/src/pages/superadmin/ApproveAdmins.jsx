@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
+import Modal from '../../components/Modal';
 import api from '../../api';
 
 export default function ApproveAdmins() {
@@ -7,6 +8,10 @@ export default function ApproveAdmins() {
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
     const [hoveredRow, setHoveredRow] = useState(null);
+
+    // Modal State
+    const [modalOpen, setModalOpen] = useState(false);
+    const [pendingAction, setPendingAction] = useState(null); // { id, action, name }
 
     useEffect(() => { load(); }, []);
 
@@ -16,10 +21,35 @@ export default function ApproveAdmins() {
         finally { setLoading(false); }
     };
 
-    const handleAction = async (id, action) => {
-        if (!window.confirm(`Are you sure you want to ${action} this admin?`)) return;
-        try { await api.put(`/admin/${action}/${id}`); load(); }
-        catch (err) { alert(err.response?.data?.detail || 'Failed'); }
+    const [actionLoading, setActionLoading] = useState(null);
+
+    const initiateAction = (admin, action) => {
+        setPendingAction({ id: admin.id, action, name: admin.name });
+        setModalOpen(true);
+    };
+
+    const executeAction = async () => {
+        if (!pendingAction) return;
+        const { id, action } = pendingAction;
+
+        setModalOpen(false); // Close modal first
+        console.log(`[ApproveAdmins] Action: ${action}, ID: ${id}`);
+        setActionLoading(id);
+
+        try {
+            const res = await api.put(`/admin/${action}/${id}`);
+            console.log('[ApproveAdmins] Success:', res.data);
+            await load();
+        }
+        catch (err) {
+            console.error('[ApproveAdmins] Error details:', err);
+            console.error('[ApproveAdmins] Response data:', err.response?.data);
+            alert(err.response?.data?.detail || 'Failed to perform action. Check console for details.');
+        }
+        finally {
+            setActionLoading(null);
+            setPendingAction(null);
+        }
     };
 
     const filtered = filter === 'all' ? admins : admins.filter(a => a.approval_status === filter);
@@ -213,21 +243,33 @@ export default function ApproveAdmins() {
                                     <div style={{ textAlign: 'right' }}>
                                         {a.approval_status === 'pending' ? (
                                             <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 6 }}>
-                                                <button onClick={() => handleAction(a.id, 'approve')}
+                                                <button onClick={() => initiateAction(a, 'approve')}
+                                                    disabled={actionLoading === a.id}
                                                     style={{
-                                                        padding: '6px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                                                        padding: '6px 12px', borderRadius: 8, border: 'none', cursor: actionLoading === a.id ? 'not-allowed' : 'pointer',
                                                         background: '#10b981', color: '#fff', fontSize: 11, fontWeight: 600,
                                                         display: 'flex', alignItems: 'center', gap: 4, boxShadow: '0 1px 2px rgba(0,0,0,0.05)',
+                                                        opacity: actionLoading === a.id ? 0.7 : 1,
                                                     }}>
-                                                    <i className="fa-solid fa-check" /> Approve
+                                                    {actionLoading === a.id ? (
+                                                        <i className="fa-solid fa-circle-notch fa-spin" />
+                                                    ) : (
+                                                        <i className="fa-solid fa-check" />
+                                                    )}
+                                                    {actionLoading === a.id ? 'Processing...' : 'Approve'}
                                                 </button>
-                                                <button onClick={() => handleAction(a.id, 'reject')}
+                                                <button onClick={() => initiateAction(a, 'reject')}
+                                                    disabled={actionLoading === a.id}
                                                     style={{
-                                                        padding: '6px 12px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: 'pointer',
+                                                        padding: '6px 12px', borderRadius: 8, border: '1px solid #e5e7eb', cursor: actionLoading === a.id ? 'not-allowed' : 'pointer',
                                                         background: '#fff', color: '#374151', fontSize: 11, fontWeight: 600,
                                                         display: 'flex', alignItems: 'center', gap: 4,
+                                                        opacity: actionLoading === a.id ? 0.7 : 1,
                                                     }}>
-                                                    Reject
+                                                    {actionLoading === a.id ? (
+                                                        <i className="fa-solid fa-circle-notch fa-spin" />
+                                                    ) : null}
+                                                    {actionLoading === a.id ? 'Processing...' : 'Reject'}
                                                 </button>
                                             </div>
                                         ) : (
@@ -256,6 +298,21 @@ export default function ApproveAdmins() {
                     </div>
                 )}
             </div>
+
+            {/* Confirmation Modal */}
+            <Modal
+                isOpen={modalOpen}
+                onClose={() => setModalOpen(false)}
+                onConfirm={executeAction}
+                title={pendingAction?.action === 'approve' ? 'Approve Admin Access' : 'Reject Access Request'}
+                message={
+                    pendingAction?.action === 'approve'
+                        ? `Are you sure you want to approve ${pendingAction?.name}? They will gain administrative access to the platform.`
+                        : `Are you sure you want to reject ${pendingAction?.name}? This action cannot be undone.`
+                }
+                confirmText={pendingAction?.action === 'approve' ? 'Approve Access' : 'Reject Request'}
+                danger={pendingAction?.action === 'reject'}
+            />
         </Sidebar>
     );
 }

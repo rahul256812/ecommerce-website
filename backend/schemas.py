@@ -30,6 +30,8 @@ class ProfileUpdate(BaseModel):
     name: Optional[str] = None
     address: Optional[str] = None
     date_of_birth: Optional[str] = None
+    age: Optional[int] = None
+    monthly_budget: Optional[float] = None
 
 
 # ---------- Products ----------

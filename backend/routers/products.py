@@ -90,9 +90,12 @@ async def update_product(
     p = db.query(Product).filter(Product.id == product_id, Product.vendor_id == current_user.id).first()
     if not p:
         raise HTTPException(status_code=404, detail="Product not found")
+    print(f"Updating product {product_id} with: {updates.model_dump(exclude_unset=True)}")
     for field, value in updates.model_dump(exclude_unset=True).items():
         setattr(p, field, value)
     db.commit()
+    db.refresh(p)
+    print(f"Updated product: id={p.id}, price={p.price}, discount={p.discount}, image_url={p.image_url}")
     return {"message": "Product updated"}
 
 

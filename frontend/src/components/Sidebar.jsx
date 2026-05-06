@@ -8,6 +8,7 @@ const menuItems = {
         { label: 'My Products', path: '/vendor/products', icon: 'fa-solid fa-boxes-stacked' },
         { label: 'Add Product', path: '/vendor/products/add', icon: 'fa-solid fa-circle-plus' },
         { label: 'Quotations', path: '/vendor/quotations', icon: 'fa-solid fa-file-invoice' },
+        { label: 'Analytics', path: '/vendor/analytics', icon: 'fa-solid fa-chart-line' },
         { label: 'Profile', path: '/vendor/profile', icon: 'fa-solid fa-user' },
     ],
     buyer: [
@@ -16,6 +17,7 @@ const menuItems = {
         { label: 'My RFQs', path: '/buyer/rfq', icon: 'fa-solid fa-clipboard-list' },
         { label: 'Cart', path: '/buyer/cart', icon: 'fa-solid fa-cart-shopping' },
         { label: 'Orders', path: '/buyer/orders', icon: 'fa-solid fa-truck-fast' },
+        { label: 'Analytics', path: '/buyer/analytics', icon: 'fa-solid fa-chart-line' },
         { label: 'Profile', path: '/buyer/profile', icon: 'fa-solid fa-user' },
     ],
     admin: [
@@ -77,7 +79,7 @@ export default function Sidebar({ children }) {
                     {!collapsed && (
                         <div>
                             <h2 style={{ fontSize: 15, fontWeight: 700, color: '#111827', letterSpacing: -0.3, lineHeight: 1, margin: 0 }}>
-                                TradeHub
+                                VenDora
                             </h2>
                             <p style={{ fontSize: 11, color: '#9ca3af', marginTop: 3, textTransform: 'capitalize' }}>
                                 {user?.role?.replace('_', ' ')}

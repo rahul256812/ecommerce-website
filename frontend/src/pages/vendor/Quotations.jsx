@@ -3,7 +3,7 @@ import Sidebar from '../../components/Sidebar';
 import StatusBadge from '../../components/StatusBadge';
 import Modal from '../../components/Modal';
 import api from '../../api';
-import { convertAndFormatINR, formatINR, convertToINR } from '../../utils/currency';
+import { formatINR } from '../../utils/currency';
 
 const inputStyle = {
     width: '100%', padding: '10px 14px', borderRadius: 10,
@@ -230,7 +230,7 @@ export default function VendorQuotations() {
                                                     background: '#f9fafb', fontSize: 12, color: '#6b7280',
                                                 }}>
                                                     <i className="fa-solid fa-indian-rupee-sign" style={{ fontSize: 10, color: '#9ca3af' }} />
-                                                    Expected: <span style={{ fontWeight: 600, color: '#374151' }}>{convertAndFormatINR(r.expected_price)}/unit</span>
+                                                    Expected: <span style={{ fontWeight: 600, color: '#374151' }}>{formatINR(r.expected_price)}/unit</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -433,7 +433,7 @@ export default function VendorQuotations() {
                                     <span style={{ fontSize: 13, color: '#6b7280' }}>{r.buyer_name}</span>
                                     <span style={{ fontSize: 13, color: '#374151', fontWeight: 500 }}>{r.quantity}</span>
                                     <span style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>
-                                        {r.vendor_price ? convertAndFormatINR(r.vendor_price) : '—'}
+                                        {r.vendor_price ? formatINR(r.vendor_price) : '—'}
                                     </span>
                                     <StatusBadge status={r.status} />
                                 </div>

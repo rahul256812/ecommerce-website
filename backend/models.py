@@ -48,6 +48,7 @@ class User(Base):
     official_doc_path = Column(String(500), default="")
     generated_id = Column(String(20), unique=True, nullable=False)
     approval_status = Column(SQLEnum(ApprovalStatus), default=ApprovalStatus.APPROVED)
+    monthly_budget = Column(Float, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     products = relationship("Product", back_populates="vendor", cascade="all, delete-orphan")

@@ -228,7 +228,7 @@ export default function SASettings() {
                                 </div>
                                 <div style={{ padding: '16px 20px' }}>
                                     {[
-                                        { label: 'Platform', value: 'TradeHub B2B', icon: 'fa-building', color: '#6366f1' },
+                                        { label: 'Platform', value: 'VenDora B2B', icon: 'fa-building', color: '#6366f1' },
                                         { label: 'Version', value: 'v1.0.0', icon: 'fa-code-branch', color: '#10b981' },
                                         { label: 'Environment', value: 'Production', icon: 'fa-server', color: '#f59e0b' },
                                     ].map((item, i) => (

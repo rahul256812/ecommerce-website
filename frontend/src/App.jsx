@@ -10,6 +10,7 @@ import VendorDashboard from './pages/vendor/Dashboard';
 import VendorProducts from './pages/vendor/Products';
 import AddProduct from './pages/vendor/AddProduct';
 import VendorQuotations from './pages/vendor/Quotations';
+import VendorAnalytics from './pages/vendor/Analytics';
 import VendorProfile from './pages/vendor/Profile';
 
 import BuyerDashboard from './pages/buyer/Dashboard';
@@ -18,6 +19,7 @@ import BuyerRFQ from './pages/buyer/RFQPage';
 import BuyerCart from './pages/buyer/Cart';
 import Checkout from './pages/buyer/Checkout';
 import BuyerOrders from './pages/buyer/Orders';
+import BuyerAnalytics from './pages/buyer/Analytics';
 import BuyerProfile from './pages/buyer/Profile';
 
 import AdminDashboard from './pages/admin/Dashboard';
@@ -48,6 +50,7 @@ export default function App() {
           <Route path="/vendor/products" element={<ProtectedRoute roles={['vendor']}><VendorProducts /></ProtectedRoute>} />
           <Route path="/vendor/products/add" element={<ProtectedRoute roles={['vendor']}><AddProduct /></ProtectedRoute>} />
           <Route path="/vendor/quotations" element={<ProtectedRoute roles={['vendor']}><VendorQuotations /></ProtectedRoute>} />
+          <Route path="/vendor/analytics" element={<ProtectedRoute roles={['vendor']}><VendorAnalytics /></ProtectedRoute>} />
           <Route path="/vendor/profile" element={<ProtectedRoute roles={['vendor']}><VendorProfile /></ProtectedRoute>} />
 
           {/* Buyer */}
@@ -57,6 +60,7 @@ export default function App() {
           <Route path="/buyer/cart" element={<ProtectedRoute roles={['buyer']}><BuyerCart /></ProtectedRoute>} />
           <Route path="/buyer/checkout" element={<ProtectedRoute roles={['buyer']}><Checkout /></ProtectedRoute>} />
           <Route path="/buyer/orders" element={<ProtectedRoute roles={['buyer']}><BuyerOrders /></ProtectedRoute>} />
+          <Route path="/buyer/analytics" element={<ProtectedRoute roles={['buyer']}><BuyerAnalytics /></ProtectedRoute>} />
           <Route path="/buyer/profile" element={<ProtectedRoute roles={['buyer']}><BuyerProfile /></ProtectedRoute>} />
 
           {/* Admin */}

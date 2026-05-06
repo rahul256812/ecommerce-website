@@ -24,7 +24,7 @@ os.makedirs("uploads", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 # Register routers
-from routers import users, products, cart, rfq, orders, admin
+from routers import users, products, cart, rfq, orders, admin, analytics
 
 app.include_router(users.router)
 app.include_router(products.router)
@@ -32,6 +32,7 @@ app.include_router(cart.router)
 app.include_router(rfq.router)
 app.include_router(orders.router)
 app.include_router(admin.router)
+app.include_router(analytics.router)
 
 
 @app.on_event("startup")

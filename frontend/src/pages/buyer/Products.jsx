@@ -2,8 +2,7 @@ import { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import { convertAndFormatINR, formatINR, formatUSD, convertToINR } from '../../utils/currency';
-import CurrencyBadge from '../../components/CurrencyBadge';
+import { formatINR } from '../../utils/currency';
 
 const catMeta = {
     Electronics: { icon: 'fa-microchip', color: '#6366f1', bg: '#eef2ff' },
@@ -38,18 +37,41 @@ export default function BuyerProducts() {
 
     const addToCart = async (productId) => {
         try {
-            await api.post('/cart/add', { product_id: productId, quantity: 1 });
+            await api.post('/cart/', { product_id: productId, quantity: 1 });
             alert('Added to cart!');
         } catch (err) { alert(err.response?.data?.detail || 'Failed to add'); }
     };
 
     const submitRfq = async () => {
         try {
-            await api.post('/rfq/', { product_id: rfqModal.product.id, quantity: parseInt(rfqForm.quantity), message: rfqForm.message });
+            await api.post('/rfq/', {
+                product_id: rfqModal.product.id,
+                vendor_id: rfqModal.product.vendor_id,
+                quantity: parseInt(rfqForm.quantity),
+                expected_price: rfqModal.product.price
+            });
             setRfqModal({ open: false, product: null });
             setRfqForm({ quantity: '', message: '' });
             alert('RFQ submitted!');
-        } catch (err) { alert(err.response?.data?.detail || 'Failed'); }
+        } catch (err) {
+            let errorMsg = 'Failed to submit RFQ';
+            if (err.response?.data) {
+                const data = err.response.data;
+                if (typeof data === 'string') {
+                    errorMsg = data;
+                } else if (data.detail) {
+                    errorMsg = data.detail;
+                } else if (Array.isArray(data)) {
+                    errorMsg = data.join(', ');
+                } else if (typeof data === 'object') {
+                    const values = Object.values(data);
+                    if (values.length > 0) {
+                        errorMsg = values.map(v => Array.isArray(v) ? v.join(', ') : String(v)).join(', ');
+                    }
+                }
+            }
+            alert(errorMsg);
+        }
     };
 
     const cm = (cat) => catMeta[cat] || catMeta.default;
@@ -68,7 +90,6 @@ export default function BuyerProducts() {
                     <h1 style={{ fontSize: 26, fontWeight: 700, color: '#111827', margin: '0 0 4px 0', letterSpacing: -0.5 }}>Browse Products</h1>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '8px 0 0 0' }}>
                         <p style={{ fontSize: 14, color: '#9ca3af', margin: 0 }}>Discover quality products from verified vendors.</p>
-                        <CurrencyBadge showUSD={true} />
                     </div>
                 </div>
 
@@ -232,11 +253,11 @@ export default function BuyerProducts() {
                                         <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 14 }}>
                                             <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                                                 <span style={{ fontSize: 20, fontWeight: 700, color: '#111827' }}>
-                                                    {convertAndFormatINR(discountedPrice || p.price)}
+                                                    {formatINR(discountedPrice || p.price)}
                                                 </span>
                                                 {discountedPrice && (
                                                     <span style={{ fontSize: 12, color: '#d1d5db', textDecoration: 'line-through' }}>
-                                                        {formatINR(convertToINR(p.price))}
+                                                        {formatINR(p.price)}
                                                     </span>
                                                 )}
                                             </div>
@@ -336,7 +357,7 @@ export default function BuyerProducts() {
                             <div>
                                 <p style={{ fontSize: 13, fontWeight: 600, color: '#111827', margin: 0 }}>{rfqModal.product?.name}</p>
                                 <p style={{ fontSize: 11, color: '#9ca3af', margin: '2px 0 0 0' }}>
-                                    {convertAndFormatINR(rfqModal.product?.price)} · {rfqModal.product?.quantity} in stock
+                                    {formatINR(rfqModal.product?.price)} · {rfqModal.product?.quantity} in stock
                                 </p>
                             </div>
                         </div>
