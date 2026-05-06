@@ -64,17 +64,10 @@ export default function Login() {
                 <div style={{ position: 'relative', zIndex: 1 }}>
                     {/* Logo */}
                     <Link to="/" style={{
-                        display: 'inline-flex', alignItems: 'center', gap: 10,
+                        display: 'inline-flex', alignItems: 'center',
                         textDecoration: 'none', marginBottom: 72
                     }}>
-                        <div style={{
-                            width: 40, height: 40, borderRadius: 12,
-                            background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                        }}>
-                            <i className="fa-solid fa-store" style={{ color: '#fff', fontSize: 14 }} />
-                        </div>
-                        <span style={{ fontSize: 20, fontWeight: 700, color: '#fff', letterSpacing: -0.4 }}>VenDora</span>
+                        <img src="/logoe.png" alt="VenDora" style={{ height: 36, width: 'auto', objectFit: 'contain', mixBlendMode: 'multiply' }} />
                     </Link>
 
                     {/* Headline */}
